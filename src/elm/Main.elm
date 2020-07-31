@@ -22,8 +22,13 @@ type Model
 
 init : ( Json.Value, Doc.InitModel, Bool ) -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url navKey =
-    Doc.init flags
-        |> (\( dm, c ) -> ( TreeDocument dm, Cmd.map GotDocMsg c ))
+    case url.path of
+        "/" ->
+            ( HomePage HomePage.init, Cmd.none )
+
+        path ->
+            Doc.init flags
+                |> (\( dm, c ) -> ( TreeDocument dm, Cmd.map GotDocMsg c ))
 
 
 
