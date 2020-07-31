@@ -24,7 +24,7 @@ const webConfig = {
 
   // Entry points into the code. The root of the dependency tree.
   entry: {
-    doc: "./shared/doc.js"
+    app: "./shared/app.js"
   },
 
   // What file types to attempt to resolve within require/import statements
@@ -66,7 +66,7 @@ const webConfig = {
     new HtmlWebpackPlugin({
       template: "./index.ejs",
       filename: "../web/index.html",
-      chunks: ["doc"]
+      chunks: ["app"]
     }),
 
     // Plugin to copy static assets (css, images).
@@ -131,7 +131,7 @@ const rendererConfig = merge(baseElectronConfig, {
   // Entry points into the code. The root of the dependency tree.
   entry: {
     home: "./shared/home.js",
-    doc: "./shared/doc.js"
+    app: "./shared/app.js"
   },
 
   // What file types to attempt to resolve within require/import statements
@@ -171,7 +171,7 @@ const rendererConfig = merge(baseElectronConfig, {
     new HtmlWebpackPlugin({
       template: "./index.ejs",
       filename: "../app/static/index.html",
-      chunks: ["doc"]
+      chunks: ["app"]
     }),
     new HtmlWebpackPlugin({
       template: "./home.ejs",

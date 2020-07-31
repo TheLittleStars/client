@@ -104,7 +104,7 @@ function createDocumentWindow(docParams) {
   documentWindows.push(win);
 
 
-  // Passed to doc.js to initialize the app
+  // Passed to app.js to initialize the app
   win.initialDocState =
     { dbPath: [(legacyFormat ? swapFolderPath : path.join(swapFolderPath,"leveldb")), originalPath]
     , lastSavedToFile
@@ -615,7 +615,7 @@ async function saveDocument (docWindow) {
  * - Get a newFilepath with save dialog
  * - Call saveSwapFolderAs to copy swap folder and save it
  * - Set docWindow.swapFolderPath and docWindow's title
- * - Send "set-swap-folder" message to doc.js
+ * - Send "set-swap-folder" message to app.js
  * Return { filepath, swapFolderPath } if successful.
  *
  */
@@ -671,7 +671,7 @@ async function saveDocumentAs(docWindow) {
  * - Get a newFilepath with save dialog
  * - Call saveLegacyFolderAs to copy swap folder and save it
  * - Set docWindow.swapFolderPath and docWindow's title
- * - Send "set-swap-folder" message to doc.js
+ * - Send "set-swap-folder" message to app.js
  * Return new filepath if successful.
  *
  */
