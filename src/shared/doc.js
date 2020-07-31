@@ -14,7 +14,7 @@ PouchDB.plugin(require("transform-pouch"));
 const helpers = require("./doc-helpers");
 const errorAlert = helpers.errorAlert;
 const { tr } = require("../shared/translation.js");
-import { Elm } from "../elm/App";
+import { Elm } from "../elm/Main";
 
 
 
@@ -203,7 +203,7 @@ if (docState.jsonImportData) {
 
 
 function initElmAndPorts(initFlags) {
-  self.gingko = Elm.App.init({ node: document.getElementById("elm"), flags: initFlags});
+  self.gingko = Elm.Main.init({ node: document.getElementById("elm"), flags: initFlags});
 
   gingko.ports.infoForOutside.subscribe(function(elmdata) {
     update(elmdata.tag, elmdata.data);
