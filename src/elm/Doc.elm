@@ -1,4 +1,4 @@
-port module Doc exposing (InitModel, Model, init, update, view)
+port module Doc exposing (InitModel, Model, init, subscriptions, update, view)
 
 import Browser.Dom
 import Coders exposing (..)
@@ -2287,7 +2287,16 @@ repeating-linear-gradient(-45deg
 
 
 
--- PORTS
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch
+        [ receiveMsg Port LogErr
+        , Time.every (15 * 1000) TimeUpdate
+        , Time.every (10 * 1000) (\_ -> Sync)
+        ]
 
 
 port dragstart : Json.Value -> Cmd msg
