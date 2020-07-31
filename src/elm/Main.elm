@@ -1,6 +1,5 @@
-port module Main exposing (InitModel, Model)
+port module Main exposing (InitModel, Model, init, update, view)
 
-import Browser
 import Browser.Dom
 import Coders exposing (..)
 import Debouncer.Basic as Debouncer exposing (Debouncer, fromSeconds, provideInput, toDebouncer)
@@ -24,16 +23,6 @@ import TreeUtils exposing (..)
 import Trees exposing (..)
 import Types exposing (..)
 import UI exposing (countWords, viewConflict, viewFooter, viewHistory, viewSaveIndicator, viewSearchField, viewVideo)
-
-
-main : Program ( Json.Value, InitModel, Bool ) Model Msg
-main =
-    Browser.element
-        { init = init
-        , view = view
-        , update = update
-        , subscriptions = subscriptions
-        }
 
 
 
@@ -2298,19 +2287,10 @@ repeating-linear-gradient(-45deg
 
 
 
--- SUBSCRIPTIONS
+-- PORTS
 
 
 port dragstart : Json.Value -> Cmd msg
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.batch
-        [ receiveMsg Port LogErr
-        , Time.every (15 * 1000) TimeUpdate
-        , Time.every (10 * 1000) (\_ -> Sync)
-        ]
 
 
 
