@@ -3,6 +3,7 @@ module Main exposing (main)
 import Browser exposing (Document)
 import Browser.Navigation as Nav
 import Doc
+import HomePage
 import Html
 import Json.Decode as Json
 import Ports exposing (..)
@@ -15,7 +16,8 @@ import Url exposing (Url)
 
 
 type Model
-    = TreeDocument Doc.Model
+    = HomePage HomePage.Model
+    | TreeDocument Doc.Model
 
 
 init : ( Json.Value, Doc.InitModel, Bool ) -> Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -37,6 +39,9 @@ view model =
             }
     in
     case model of
+        HomePage homeModel ->
+            viewPage HomePage GotHomeMsg "Home" [ HomePage.view homeModel ]
+
         TreeDocument docModel ->
             viewPage TreeDocument GotDocMsg "Tree" [ Doc.view docModel ]
 
@@ -48,6 +53,7 @@ view model =
 type Msg
     = ChangedUrl Url
     | ClickedLink Browser.UrlRequest
+    | GotHomeMsg HomePage.Msg
     | GotDocMsg Types.Msg
 
 
@@ -60,9 +66,16 @@ update msg model =
         ( ClickedLink _, _ ) ->
             ( model, Cmd.none )
 
+        ( GotHomeMsg subMsg, HomePage docModel ) ->
+            HomePage.update subMsg docModel
+                |> updateWith HomePage GotHomeMsg
+
         ( GotDocMsg subMsg, TreeDocument docModel ) ->
             Doc.update subMsg docModel
                 |> updateWith TreeDocument GotDocMsg
+
+        ( _, _ ) ->
+            ( model, Cmd.none )
 
 
 updateWith : (subModel -> Model) -> (subMsg -> Msg) -> ( subModel, Cmd subMsg ) -> ( Model, Cmd Msg )
@@ -87,6 +100,9 @@ main =
         , subscriptions =
             \m ->
                 case m of
+                    HomePage _ ->
+                        Sub.none
+
                     TreeDocument dm ->
                         Doc.subscriptions dm
                             |> Sub.map GotDocMsg
