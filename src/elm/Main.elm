@@ -3,9 +3,10 @@ module Main exposing (main)
 import Browser exposing (Document)
 import Browser.Navigation as Nav
 import Doc
-import HomePage
 import Html
 import Json.Decode as Json
+import Page.Doc as DocPage
+import Page.Home as HomePage
 import Ports exposing (..)
 import Types
 import Url exposing (Url)
@@ -17,18 +18,21 @@ import Url exposing (Url)
 
 type Model
     = HomePage HomePage.Model
-    | TreeDocument Doc.Model
+    | TreeDocument DocPage.Model
 
 
-init : ( Json.Value, Doc.InitModel, Bool ) -> Url -> Nav.Key -> ( Model, Cmd Msg )
+init : ( Doc.InitModel, Bool ) -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url navKey =
     case url.path of
         "/" ->
             ( HomePage HomePage.init, Cmd.none )
 
         path ->
-            Doc.init flags
-                |> (\( dm, c ) -> ( TreeDocument dm, Cmd.map GotDocMsg c ))
+            let
+                ( docPageModel, docPageCmd ) =
+                    DocPage.init flags (Just path)
+            in
+            ( TreeDocument docPageModel, Cmd.map GotDocMsg docPageCmd )
 
 
 
@@ -48,7 +52,7 @@ view model =
             viewPage HomePage GotHomeMsg "Home" [ HomePage.view homeModel ]
 
         TreeDocument docModel ->
-            viewPage TreeDocument GotDocMsg "Tree" [ Doc.view docModel ]
+            viewPage TreeDocument GotDocMsg "Tree" [ DocPage.view docModel ]
 
 
 
@@ -59,7 +63,7 @@ type Msg
     = ChangedUrl Url
     | ClickedLink Browser.UrlRequest
     | GotHomeMsg HomePage.Msg
-    | GotDocMsg Types.Msg
+    | GotDocMsg DocPage.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -76,7 +80,7 @@ update msg model =
                 |> updateWith HomePage GotHomeMsg
 
         ( GotDocMsg subMsg, TreeDocument docModel ) ->
-            Doc.update subMsg docModel
+            DocPage.update subMsg docModel
                 |> updateWith TreeDocument GotDocMsg
 
         ( _, _ ) ->
@@ -94,7 +98,7 @@ updateWith toModel toMsg ( subModel, subCmd ) =
 -- MAIN
 
 
-main : Program ( Json.Value, Doc.InitModel, Bool ) Model Msg
+main : Program ( Doc.InitModel, Bool ) Model Msg
 main =
     Browser.application
         { init = init
@@ -109,6 +113,6 @@ main =
                         Sub.none
 
                     TreeDocument dm ->
-                        Doc.subscriptions dm
+                        DocPage.subscriptions dm
                             |> Sub.map GotDocMsg
         }

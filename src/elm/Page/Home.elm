@@ -1,4 +1,4 @@
-module HomePage exposing (Model, Msg, init, update, view)
+module Page.Home exposing (Model, Msg, init, update, view)
 
 import Html exposing (..)
 import Translation exposing (TranslationId(..), langFromString, languageName, timeDistInWords, tr)

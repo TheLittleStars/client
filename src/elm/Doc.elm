@@ -153,43 +153,22 @@ defaultModel =
 -}
 
 
-init : ( Json.Value, InitModel, Bool ) -> ( Model, Cmd Msg )
-init ( dataIn, modelIn, isImport ) =
+init : ( InitModel, Bool ) -> ( Model, Cmd Msg )
+init ( modelIn, isImport ) =
     let
-        ( newStatus, newTree_, newObjects ) =
-            case Json.decodeValue treeDecoder dataIn of
-                Ok newTreeDecoded ->
-                    {- The JSON was successfully decoded by treeDecoder.
-                       We need to create the first commit to the history.
-                    -}
-                    Objects.update (Objects.Commit [] "Jane Doe <jane.doe@gmail.com>" modelIn.currentTime newTreeDecoded) defaultModel.objects
-                        |> (\( s, _, o ) -> ( s, Just newTreeDecoded, o ))
-
-                Err err ->
-                    {- If treeDecoder fails, we assume that this was a
-                       load from the database instead. See Objects.elm for
-                       how the data is converted from JSON to type Objects.Model
-                    -}
-                    Objects.update (Objects.Init dataIn) defaultModel.objects
-
-        newTree =
-            Maybe.withDefault Trees.defaultTree newTree_
-
         newWorkingTree =
-            Trees.setTree newTree defaultModel.workingTree
+            Trees.setTree Trees.defaultTree defaultModel.workingTree
 
         startingWordcount =
-            newTree_
-                |> Maybe.map (\t -> countWords (treeToMarkdownString False t))
-                |> Maybe.withDefault 0
+            0
 
         columnNumber =
             newWorkingTree.columns |> List.length |> (\l -> l - 1)
     in
     ( { defaultModel
         | workingTree = newWorkingTree
-        , objects = newObjects
-        , status = newStatus
+        , objects = Objects.defaultModel
+        , status = Bare
         , language = langFromString modelIn.language
         , isMac = modelIn.isMac
         , shortcutTrayOpen = modelIn.shortcutTrayOpen

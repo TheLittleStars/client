@@ -31,6 +31,9 @@ sendOut info =
             dataToSend (int cols)
 
         -- === Database ===
+        FetchData str ->
+            dataToSend (string str)
+
         CommitWithTimestamp ->
             dataToSend null
 

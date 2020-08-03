@@ -50,6 +50,7 @@ type
     | ConfirmCancelCard String String
     | ColumnNumberChange Int
       -- === Database ===
+    | FetchData String
     | CommitWithTimestamp
     | NoDataToSave
     | SaveToDB ( Json.Value, Json.Value )
